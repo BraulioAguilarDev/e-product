@@ -2,7 +2,7 @@
 
 The goal in this example is to use Suite by testify.
 
-# Tes code
+# Test code
 
 Generating the pg container
 
