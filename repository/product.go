@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"ecommerce/model"
+	"errors"
 
 	"github.com/google/uuid"
 )
@@ -26,6 +27,11 @@ func InitializeProductRepository(db *sql.DB) ProductRepository {
 }
 
 func (p *productRepository) Create(sku, name string, price float64) (*model.Product, error) {
+	// simple validation for testing
+	if err := p.Validate(sku, name, price); err != nil {
+		return nil, err
+	}
+
 	product, err := p.db.CreateProduct(context.Background(), model.CreateProductParams{
 		Sku:   sku,
 		Name:  name,
@@ -39,6 +45,10 @@ func (p *productRepository) Create(sku, name string, price float64) (*model.Prod
 }
 
 func (p *productRepository) Update(product *model.Product) (*model.Product, error) {
+	if err := p.Validate(product.Sku, product.Name, product.Price); err != nil {
+		return nil, err
+	}
+
 	updated, err := p.db.UpdateProduct(context.Background(), model.UpdateProductParams{
 		Sku:   product.Sku,
 		Name:  product.Name,
@@ -63,4 +73,20 @@ func (p *productRepository) Get(id uuid.UUID) (*model.Product, error) {
 	}
 
 	return &product, nil
+}
+
+func (p *productRepository) Validate(sku, name string, price float64) error {
+	if sku == "" {
+		return errors.New("sku no valid")
+	}
+
+	if name == "" {
+		return errors.New("name no valid")
+	}
+
+	if price < 1 {
+		return errors.New("price no valid")
+	}
+
+	return nil
 }
