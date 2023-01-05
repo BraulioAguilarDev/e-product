@@ -45,8 +45,8 @@ func (p *productRepository) Create(sku, name string, price float64) (*model.Prod
 }
 
 func (p *productRepository) Update(product *model.Product) (*model.Product, error) {
-	if err := p.Validate(product.Sku, product.Name, product.Price); err != nil {
-		return nil, err
+	if product == nil {
+		return nil, errors.New("product can not be nil")
 	}
 
 	updated, err := p.db.UpdateProduct(context.Background(), model.UpdateProductParams{
