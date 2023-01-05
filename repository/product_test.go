@@ -48,6 +48,15 @@ func (suite *productRepositorySuite) TestCreateProduct() {
 	suite.NotEmpty(product.ID.Value())
 }
 
+func (suite *productRepositorySuite) TestCreateProductError() {
+	data := model.Product{Price: 0}
+
+	product, err := suite.repository.Create(data.Sku, data.Name, data.Price)
+	suite.Nil(product)
+	suite.NotNil(err)
+	suite.ErrorContains(err, "sku no valid")
+}
+
 func (suite *productRepositorySuite) TestGetProduct() {
 	expected := model.Product{
 		Sku:   "sku2",
