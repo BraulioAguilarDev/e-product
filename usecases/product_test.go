@@ -59,6 +59,7 @@ func (suite *productUsecaseSuite) TestUpdateProduct() {
 	updated, err := suite.usecase.Update(product)
 	suite.NoError(err)
 	suite.NotNil(updated)
+	suite.repository.AssertExpectations(suite.T())
 }
 
 func (suite *productUsecaseSuite) TestDeleteProduct() {
@@ -68,6 +69,7 @@ func (suite *productUsecaseSuite) TestDeleteProduct() {
 
 	err = suite.usecase.Delete(id)
 	suite.NoError(err)
+	suite.repository.AssertExpectations(suite.T())
 }
 
 func (suite *productUsecaseSuite) TestGetProduct() {
@@ -87,6 +89,7 @@ func (suite *productUsecaseSuite) TestGetProduct() {
 	suite.Equal(product.Name, result.Name)
 	suite.Equal(product.Sku, result.Sku)
 	suite.Equal(product.Price, result.Price)
+	suite.repository.AssertExpectations(suite.T())
 }
 
 func TestProductUsecase(t *testing.T) {
