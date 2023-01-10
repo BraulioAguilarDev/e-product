@@ -5,6 +5,7 @@ import (
 	"ecommerce/model"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -43,6 +44,49 @@ func (suite *productUsecaseSuite) TestCreateProduct() {
 	suite.Equal(product.Name, created.Name)
 	suite.Equal(product.Price, created.Price)
 	suite.repository.AssertExpectations(suite.T())
+}
+
+func (suite *productUsecaseSuite) TestUpdateProduct() {
+	id, _ := uuid.NewRandom()
+	product := &model.Product{
+		ID:    id,
+		Sku:   "sk2",
+		Name:  "name2",
+		Price: 1,
+	}
+	suite.repository.On("Update", product).Return(product, nil)
+
+	updated, err := suite.usecase.Update(product)
+	suite.NoError(err)
+	suite.NotNil(updated)
+}
+
+func (suite *productUsecaseSuite) TestDeleteProduct() {
+	id, err := uuid.NewRandom()
+	suite.NoError(err)
+	suite.repository.On("Delete", id).Return(nil)
+
+	err = suite.usecase.Delete(id)
+	suite.NoError(err)
+}
+
+func (suite *productUsecaseSuite) TestGetProduct() {
+	id, _ := uuid.NewRandom()
+
+	product := &model.Product{
+		ID:    id,
+		Sku:   "sk3",
+		Name:  "name3",
+		Price: 3,
+	}
+
+	suite.repository.On("Get", id).Return(product, nil)
+
+	result, err := suite.repository.Get(id)
+	suite.NoError(err)
+	suite.Equal(product.Name, result.Name)
+	suite.Equal(product.Sku, result.Sku)
+	suite.Equal(product.Price, result.Price)
 }
 
 func TestProductUsecase(t *testing.T) {
